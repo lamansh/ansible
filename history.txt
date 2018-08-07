@@ -1,0 +1,40 @@
+  102  history | grep ansible
+  103  ansible  nodes  -vvv -u kuber -b --become-method=sudo -a "reboot"
+  121  history | grep ansible
+  122  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e kube_version=v1.11.0
+  123  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e
+  124  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e kube_version=v1.11.0
+  125  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  128  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  129  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e kube_version=v1.11.0
+  228  cd /home/kuber/ansible/kubespray/
+  229  histoty | grep ansible
+  230  history | grep ansible
+  231  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e kube_version=v1.11.0
+  232  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e kube_version=v1.11.0
+  233  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e kube_version=v1.11.0
+  239  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini upgrade-cluster.yml -e kube_version=v1.11.0
+  281  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  282  cd /home/kuber/ansible/kubespray/
+  283  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  284  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  349  history | grep ansible
+  353  cd ansible/
+  354  ansible  nodes  -u kuber -b --become-method=sudo -a "systemctl stop metricbeat"
+  355  ansible  nodes  -u kuber -b --become-method=sudo -a "systemctl disable metricbeat"
+  356  cat /etc/ansible/hosts
+  357  ansible  master  -u kuber -b --become-method=sudo -a "systemctl disable metricbeat"
+  372  cat /etc/ansible/hosts
+  373  ansible  master  -u kuber -b --become-method=sudo -a "systemctl disable metricbeat"
+  490  cd ansible/kubespray/
+  492  history | grep ansible
+  493  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  494  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  495  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0 --limit @/home/kuber/ansible/kubespray/cluster.retry
+  496  ansible-playbook -u kuber -b -i inventory/mycluster/hosts.ini cluster.yml -e kube_version=v1.11.0
+  504  git remote add origin https://github.com/lamansh/ansible.git
+  569  git remote add origin https://github.com/lamansh/ansible.git
+  580  git remote add origin https://github.com/lamansh/ansible.git
+  584  history | grep ansible
+  586  ansible-playbook nodes -u kuber -b
+  589  ansible-playbook ts.yaml -u kuber -b
