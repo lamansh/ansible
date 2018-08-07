@@ -1,0 +1,24 @@
+---
+# tasks file for teamcity-server
+
+- name: Source
+  shell: source /root/.bashrc
+
+- stat:
+    path: /etc/metricbeat
+  register: mbarch
+#    go get k8s.io/kube-state-metrics
+#    kubectl apply -f /root/go {{ gopath }}/src/k8s.io/kube-state-metrics/kubernetes
+- name: Enable and configure the kubernetes module
+  async: 600
+  shell: |
+    who
+    {{ gobin }} get k8s.io/kube-state-metrics
+    kubectl apply -f {{ kuberpath }}
+
+  register: kubermetrics
+
+- name: Debug Kuber-state-metrics
+  debug: var=kubermetrics
+
+

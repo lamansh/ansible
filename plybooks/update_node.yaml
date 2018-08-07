@@ -1,0 +1,8 @@
+- hosts: nodes
+  tasks:
+    - debug: var=inventory_hostname
+    - name: updtae kubernetes 
+      apt:
+        name: "kube*" 
+        state: latest
+        update_cache: yes

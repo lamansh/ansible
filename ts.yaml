@@ -1,0 +1,8 @@
+- hosts: nodes
+  roles:
+    - mb
+#- hosts: master
+#  gather_facts: True
+#  roles:
+##    - ansible-go
+#    - kube-state-metrics

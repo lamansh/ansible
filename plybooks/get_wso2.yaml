@@ -1,0 +1,69 @@
+- hosts: nodes
+  vars:
+    wso2home: /opt/wso2/docker-ei/dockerfiles/base
+    wso2ei: /opt/wso2/docker-ei/dockerfiles/integrator
+  tasks:
+    - name: create dir for wso2
+      file:
+        path: /opt/wso2
+        state: directory
+        mode: 0755
+    - stat:
+        path: /opt/wso2/docker-ei
+      register: docker
+    - stat:
+        path: "{{ wso2home }}/files/wso2ei-6.1.1.zip"
+      register: wso2zip
+
+    - stat:
+        path: "{{ wso2home }}/files/jdk-8u151-linux-x64.tar.gz"
+      register: java
+
+
+    - name: Get WSO2
+      command: bash -lc "cd /opt/wso2/ && git clone https://github.com/wso2/docker-ei.git"
+      when: docker.stat.exists == False
+
+    - name: Patch WSO2 Dockerfile
+      command: sed -i '/chmod -R g=u ${USER_HOME/ s/$/ \&\& \\ /'  "{{wso2home}}/Dockerfile"
+      args:
+        chdir: "{{ wso2home }}"
+
+    - name: Patch WSO2 Dockerfile2
+      command: bash -lc "cd /opt/wso2/ && sed -i '/chmod -R g=u ${USER_HOME}/a \    chmod 770 /home/wso2carbon/wso2ei-6.1.1/bin/integrator.sh && \\ \\' {{wso2home}}/Dockerfile"
+    - name: Copy Append File
+      tags:
+        - patch
+      copy:
+        src: "append"
+        dest: "{{wso2home}}/append"
+
+    - name: Patch WSO2 Dockerfile3
+      command:  sed -i '/chmod 770 \/home\/wso2carbon\/wso2ei\-6\.1\.1\/bin\/integrator.sh/ r  /opt/wso2/docker-ei/dockerfiles/base/append' "{{wso2home}}/Dockerfile"
+      tags:
+        - patch
+    - name: Get wso2.zip
+      command: wget --user-agent="testuser" --referer="http://connect.wso2.com/wso2/getform/reg/new_product_download" http://dist.wso2.org/products/enterprise-integrator/6.1.1/wso2ei-6.1.1.zip
+      when: wso2zip.stat.exists == False
+      args:
+        chdir: "{{wso2home}}/files"
+    - name: Get java
+      command: 'wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie"  http://download.oracle.com/otn-pub/java/jdk/8u151-b12/e758a0de34e24606bca991d704f6dcbf/jdk-8u151-linux-x64.tar.gz'
+      when: java.stat.exists == False
+      args:
+        chdir: "{{wso2home}}/files"
+    - name: Build wso2 base
+      command: docker build -t wso2ei-base:6.1.1 "{{wso2home}}"
+      async: 6000
+      args:
+        chdir: "{{ wso2home }}"
+    - name: Build wso2ei
+      command: docker build -t wso2ei-integrator:6.1.1 "{{wso2ei }}"
+      async: 6000
+      args:
+        chdir: "{{ wso2home }}"
+      
+    - name: Build wso2ei
+      command: docker tag wso2ei-integrator:6.1.1 localhost:5000/wso2-integrator:6.1.1
+        
+ 

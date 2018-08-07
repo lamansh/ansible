@@ -1,0 +1,12 @@
+- hosts: all
+  gather_facts: true
+  vars:
+    env: 
+      ANSIBLE_CONTROLLER: 10.1.158.174
+  tasks:
+    - name: Multiple environment variables in a single line ansible task
+      debug:
+        msg: "{{ ansible_env }}"
+    - name: PRINTENV
+      shell: echo $ANSIBLE_CONTROLLER
+      enviropment: env

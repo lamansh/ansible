@@ -1,0 +1,16 @@
+- hosts: nodes
+  tasks:
+#    - debug: var=inventory_hostname
+#    - name: Copy auth key  to hosts
+#      authorized_key:
+#        user: kuber
+#        state: present
+#        key: "{{lookup('file', '/home/kuber/.ssh/id_rsa.pub')}}"
+     - name: Add user to remote hosts
+       user: name=d.spasiuk groups=sudo shell=/bin/bash password=$6$wfoDBjOfJ4$qtMm2aVCIgWEWqacl/stAP9K.S6nogborlem9jx4MLs3QCS7sZuWfAqlW2C..DMeMocIWXN3liIJn2PO7tlXV.
+
+     - name: Add SSH keys to remote hosts
+       authorized_key:
+         user=d.spasiuk 
+         state: present
+         key: "{{ lookup('file', "/home/kuber/ansible/id_rsa.pub") }}"

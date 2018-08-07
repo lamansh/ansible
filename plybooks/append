@@ -1,0 +1,1 @@
+sed -i 's/JVM_MEM_OPTS="-Xms256m -Xmx1024m"/JVM_MEM_OPTS="-Xms2048m -Xmx2048m"/' /home/wso2carbon/wso2ei-6.1.1/bin/integrator.sh

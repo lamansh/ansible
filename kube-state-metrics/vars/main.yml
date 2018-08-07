@@ -1,0 +1,3 @@
+---
+kuberpath: /root/go/src/k8s.io/kube-state-metrics/kubernetes
+gobin: /usr/local/go/bin/go

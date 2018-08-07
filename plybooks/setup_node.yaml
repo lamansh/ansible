@@ -1,0 +1,108 @@
+- hosts: nodes
+  tasks:
+    - debug: var=inventory_hostname
+    - name: install packages 
+      apt:
+        name: apt-transport-https 
+        state: present
+      apt:
+        name: ca-certificates 
+        state: present
+      apt:
+       name: curl
+       state: present
+      apt:
+       name: curl
+       state: present
+      apt:
+       name: software-properties-common
+       state: present
+      apt:
+       name: mc
+       state: present
+      apt:
+       name: htop
+       state: present
+      apt:
+       name: sudo
+       state: present
+      apt:
+       name: lsb-release
+       state: present
+      apt:
+       name: lsb-core
+       state: present
+        
+    - name: Add certificate for Docker
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+      
+    - name: atp update
+      apt:
+       update_cache: yes
+       
+    - name: add Kuber source
+      shell: cat <<EOF >/etc/apt/sources.list.d/kubernetes.list deb http://apt.kubernetes.io/ kubernetes-xenial main EOF
+      
+    - name: atp update1
+      apt:
+       update_cache: yes
+       
+    - name: Install Kuber
+      apt: 
+        name: kubelet
+        name: kubeadm
+        name: kubectl
+        
+    - name: atp update2
+      apt:
+       update_cache: yes
+       
+    - name: Install Docker
+      shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")    $(lsb_release -cs) stable"
+      shell: apt-get update && apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 17.03 | head -1 | awk '{print $3}')
+    
+    - name: atp update3
+      apt:
+       update_cache: yes
+    
+    - name: Stop Docker
+      service: 
+        name: docker
+        state: stopped
+
+    - name: Create Dirs for Docker
+      file:
+        path: /opt/docker
+        state: directory
+        mode: 0755
+    - name: Copy Docker folder
+      copy:
+        src: /var/lib/docker
+        dest: /opt/
+        remote_src: yes
+        
+    - name: Edit docker defaults to add new location
+      shell: sed -i 's/^#DOCKER_OPTS.*$/DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4 \-g \/opt\/docker"/' /etc/default/docker
+
+    - name: Add insecure registry
+      shell: printf "{ \n "insecure-registries" : [ "10.1.158.171:5000" ] \n } \n" > /etc/docker/daemon.json
+      tags:
+      - insecure_registry
+
+    - name: Restart Docker
+      service: 
+        name: docker
+        state: restarted
+        
+    - name: Wipe out Cache
+      shell: swapoff -a
+      shell: sed -i '/ swap / s/^/#/' /etc/fstab
+
+    - name: Fix missing cgroups for Kuber
+      shell: sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="cgroup_enable=memory swapaccount=1"/' /etc/default/grub
+      shell: update-grub
+      shell: shutdown -r now
+      
+    - name: Join node to Kuber
+      shell: kubeadm join --token 794783.e9928f594d676547 10.1.158.171:6443 --discovery-token-ca-cert-hash sha256:5b4d6fb189059861e9cbcc8260915a625febea511a0bb39588632febf1e863dc

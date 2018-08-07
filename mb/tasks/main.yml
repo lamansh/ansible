@@ -1,0 +1,34 @@
+---
+# tasks file for teamcity-server
+
+- stat:
+    path: /etc/metricbeat
+  register: mbarch
+
+#- name: Download and unarchive metricbeat
+#  unarchive:
+#    src: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-6.2.4-darwin-x86_64.tar.gz
+#    dest: /tmp
+#    remote_src: yes
+#  when: mbarch.stat.exists == False
+
+- name: Install deb metricbeat
+  apt:
+    deb: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-6.2.4-amd64.deb
+  when: mbarch.stat.exists == False
+
+- name: copy files metricbeat.aml
+  copy:
+    src: "{{ role_path }}/files/metricbeat.yml"
+    dest: /etc/metricbeat/
+
+- name: copy files system.yml
+  copy:
+    src: "{{ role_path }}/files/system.yml"
+    dest: /etc/metricbeat/modules.d
+
+- name: Enable and configure the kubernetes module
+  shell: |
+    metricbeat modules enable kubernetes 
+    metricbeat setup
+
