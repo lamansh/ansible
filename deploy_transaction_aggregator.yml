@@ -1,0 +1,35 @@
+ hosts: "{{ report_db_ip }}"
+  become: True
+  become_user: root
+  pre_tasks:
+
+    - name: get image id
+      local_action: shell cat id_ta
+      run_once: true
+      register: id
+      tags: [transaction_aggregator]
+
+    - name: Set image id
+      local_action: set_fact id={{ id.stdout }}
+      run_once: true
+      tags: [transaction_aggregator]
+
+    - name: Container is running
+      docker_container:
+        name: transaction_aggregator
+        image: "{{ registry_host }}:5000/transaction_aggregator:{{ id }}"
+        pull: true
+        state: started
+        network_mode: default
+        hostname: '{{ ansible_hostname }}'
+        published_ports:
+          - 8084:8084
+        links:
+          - "transaction_aggregator:transaction_aggregator"
+        env:
+          REPORTDB_HOST: "{{ report_db_ip }}"
+
+      tags: [transaction_aggregator]
+
+  roles:
+    - docker_cleanup
